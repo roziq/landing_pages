@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rekomendasi Produk & Setup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+  <div class="max-w-md mx-auto p-4">
+    <!-- Header -->
+    <div class="text-center my-6">
+      <h1 class="text-xl font-bold text-gray-900">Rekomendasi Produk</h1>
+      <p class="text-sm text-gray-500 mt-1">Cari nomor ID produk sesuai yang ada di Threads!</p>
+    </div>
+
+    <!-- Container Daftar Produk -->
+    <div id="product-list" class="space-y-4">
+      <div class="text-center py-8 text-gray-400">Memuat produk...</div>
+    </div>
+  </div>
+
+  <script>
+    // GANTI URL DI BAWAH DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7mghW0xBMRJ0XbxyK5kX0u0xdU67staIqP5r5toqGxuOg80fuDPzmmf8f8RLCDbGd/exec";
+
+    async function fetchProducts() {
+      const container = document.getElementById('product-list');
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        if (data.length === 0) {
+          container.innerHTML = '<div class="text-center text-gray-500">Belum ada produk aktif.</div>';
+          return;
+        }
+
+        container.innerHTML = data.map(item => `
+          <div class="bg-white rounded-xl shadow-sm p-4 flex items-center space-x-4 border border-gray-200">
+            <img src="${item.gambar || 'https://via.placeholder.com/80'}" alt="${item.nama}" class="w-20 h-20 object-cover rounded-lg border">
+            <div class="flex-1 min-w-0">
+              <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">No. ${item.id}</span>
+              <h2 class="text-sm font-semibold text-gray-900 truncate mt-1">${item.nama}</h2>
+              <p class="text-xs text-gray-500 mb-2">${item.kategori}</p>
+              <a href="${item.link}" target="_blank" rel="noopener noreferrer" 
+                 class="inline-block bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                Beli di Shopee ➔
+              </a>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = '<div class="text-center text-red-500 text-sm">Gagal memuat data produk.</div>';
+      }
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>
